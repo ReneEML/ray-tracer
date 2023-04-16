@@ -39,6 +39,7 @@ HittableList random_scene() {
     for (int a = -11; a < 11; a++) {
         for (int b = -11; b < 11; b++) {
             auto choose_mat = random_double();
+            auto choose_shape = random_double();
             Point3 center(a + 0.9*random_double(), 0.2, b + 0.9*random_double());
 
             if ((center - Point3(4, 0.2, 0)).length() > 0.9) {
@@ -48,17 +49,32 @@ HittableList random_scene() {
                     // diffuse
                     auto albedo = Color::random() * Color::random();
                     sphere_material = make_shared<Lambertian>(albedo);
-                    world.add(make_shared<Sphere>(center, 0.2, sphere_material));
+                    if(choose_shape > 0.5) {
+                        world.add(make_shared<Sphere>(center, 0.2, sphere_material));
+                    }
+                    else {
+                        world.add(make_shared<RectangularPrism>(center - Vec3(0.2, 0.0, 0.0), 0.4, 0.4, 0.4, sphere_material));
+                    }
                 } else if (choose_mat < 0.95) {
                     // Metal
                     auto albedo = Color::random(0.5, 1);
                     auto fuzz = random_double(0, 0.5);
                     sphere_material = make_shared<Metal>(albedo, fuzz);
-                    world.add(make_shared<Sphere>(center, 0.2, sphere_material));
+                    if(choose_shape > 0.5) {
+                        world.add(make_shared<Sphere>(center, 0.2, sphere_material));
+                    }
+                    else {
+                        world.add(make_shared<RectangularPrism>(center - Vec3(0.2, 0.0, 0.0), 0.4, 0.4, 0.4, sphere_material));
+                    }
                 } else {
                     // glass
                     sphere_material = make_shared<Dielectric>(1.5);
-                    world.add(make_shared<Sphere>(center, 0.2, sphere_material));
+                    if(choose_shape > 0.5) {
+                        world.add(make_shared<Sphere>(center, 0.2, sphere_material));
+                    }
+                    else {
+                        world.add(make_shared<RectangularPrism>(center - Vec3(0.2, 0.0, 0.0), 0.4, 0.4, 0.4, sphere_material));
+                    }
                 }
             }
         }
@@ -85,24 +101,14 @@ int main() {
     const int samples_per_pixel = 100;
     const int max_depth = 50;
 
-   HittableList world;
-
-    auto material_ground = make_shared<Lambertian>(Color(0.8, 0.8, 0.0));
-    auto material_center = make_shared<Lambertian>(Color(0.1, 0.2, 0.5));
-    auto material_left   = make_shared<Dielectric>(1.5);
-    auto material_right  = make_shared<Metal>(Color(0.8, 0.6, 0.2), 0.0);
-
-    world.add(make_shared<Sphere>(Point3( 0.0, -100.5, -1.0), 100.0, material_ground));
-    world.add(make_shared<RectangularPrism>(Point3( -0.5,    -0.5, -1.0),   1, 1, 3, material_center));
-    world.add(make_shared<RectangularPrism>(Point3( 1,    -0.5, -1.0),   1, 1, 3, material_center));
-
+   auto world = random_scene();
 
     // Camera
-    Point3 lookfrom( -1,2, 1);
-    Point3 lookat(0,1,-1);
+    Point3 lookfrom(13,2,3);
+    Point3 lookat(0,0,0);
     Vec3 vup(0,1,0);
     auto dist_to_focus = 10.0;
-    auto aperture = 0.0;
+    auto aperture = 0.1;
 
     camera cam(lookfrom, lookat, vup, 90, aspect_ratio, aperture, dist_to_focus);
 
