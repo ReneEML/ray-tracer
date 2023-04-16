@@ -6,6 +6,7 @@
 #include "sphere.h"
 #include "material.h"
 #include "triangle.h"
+#include "rectangular_prism.h"
 
 #include <iostream>
 
@@ -92,25 +93,13 @@ int main() {
     auto material_right  = make_shared<Metal>(Color(0.8, 0.6, 0.2), 0.0);
 
     world.add(make_shared<Sphere>(Point3( 0.0, -100.5, -1.0), 100.0, material_ground));
-    //world.add(make_shared<Sphere>(Point3( 0.0,    0.0, -1.0),   0.5, material_center));
-    world.add(make_shared<Sphere>(Point3(-2.0,    0.0, -2.0),   0.5, material_center));
-//    world.add(make_shared<Sphere>(Point3(-1.0,    0.0, -1.0), -0.45, material_left));
-    world.add(make_shared<Sphere>(Point3( 2.0,    0.0, 0.0),   0.5, material_center));
-    auto a = Point3(0, 0, 0) * 2;
-    auto b = Point3 (-0.5, 0, -0.866) * 2;
-    auto c = Point3 (0.5,0,-0.866) * 2;
-    auto d = Point3 (0, 0.866, -0.5) * 2;
-    world.add(make_shared<Triangle>(a,b,c,material_right));
-    world.add(make_shared<Triangle>(a,d,c,material_right));
-    world.add(make_shared<Triangle>(a,b,d,material_right));
-    world.add(make_shared<Triangle>(d,b,c,material_right));
-
-
+    world.add(make_shared<RectangularPrism>(Point3( -0.5,    -0.5, -1.0),   1, 1, 3, material_center));
+    world.add(make_shared<RectangularPrism>(Point3( 1,    -0.5, -1.0),   1, 1, 3, material_center));
 
 
     // Camera
-    Point3 lookfrom( 0,2, 1);
-    Point3 lookat(0,0,-1);
+    Point3 lookfrom( -1,2, 1);
+    Point3 lookat(0,1,-1);
     Vec3 vup(0,1,0);
     auto dist_to_focus = 10.0;
     auto aperture = 0.0;
